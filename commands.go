@@ -12,7 +12,7 @@ import (
 )
 
 func filterExistingCredentials(list []string) []string {
-	result := make([]string, 0)
+	var result []string
 	for _, item := range list {
 		if !strings.HasPrefix(item, "AWS_ACCESS_KEY_ID=") &&
 			!strings.HasPrefix(item, "AWS_SECRET_ACCESS_KEY=") &&

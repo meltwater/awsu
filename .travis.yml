@@ -1,0 +1,21 @@
+language: go
+sudo: false
+os:
+  - linux
+  - osx
+go:
+  - 1.6
+
+# Deploy executables to Github release tags
+deploy:
+  provider: releases
+  api_key:
+    secure: JotH2XgNOyR2Pi+5NMQRS2t7VhMamxzhlxWf+pXC3hUUzeIKSTszX0DVtfgjKkLkJzoai9Y62kEUhEvOHEqdQN8hsE89mjbBVCTPpO0Jl0NNJ8HKbIlg0iY5vgMesQTO5LrSIQoYfILhGFVUqVvRPw/7CX7Y5wSV6ca4SvvruSSzyG2dEyehCR5TcPFJR/aH4DmO/I4AumPEA82uuv3naaGmFl1y45Q51jgUWWq2WvJK/i0pECWzSc6HtVUAvFvrypZKRu4L+EFC0DS8mSUa6lgEsUnp714/YnYM2zXqXy2vBZR/ZNZVN3/67BGpqaZeGmoKEH0l5cXzBdPTiuihneziI6v3E+CP6E/bhVTSiDKJw1yeA8E5fdotnjhvXVHAxftA182yh3TVPnDinn/QKgTsdtS4ofs99AOyqtaMGdIGp5WRDJsP/40bsy9uRApdrxiKqpSxWcSQndqs3x506fVcd2VnuITSIA9q4lM6d1x1pP74qtcGx175iI1TLt06wu59mnXC8Ba+uZh6ycY37Zsiqdvr1J+hJCUJrTMXDghFtrHSUhxOvVWtehQbG2VL53/NhvwCauwZLVJiiNmqZcppyWDww6Y7+zSNBPm9MIY0o/bgr3nCHSDRiQ3mhmauO12hab6svmPIhcDQ/n1lMpF4OgXbdWwlPCoGh/sZAYg=
+  file: "awsu-$(uname -s)-$(uname -m)"
+  skip_cleanup: true
+  on:
+    tags: true
+
+# Code coverage for master branch using https://codecov.io/github/meltwater/awsu
+after_success:
+  - if [ "$TRAVIS_TAG" == "" ] && [ "$TRAVIS_OS_NAME" == "linux" ]; then bash <(curl -s https://codecov.io/bash); fi

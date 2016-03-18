@@ -1,0 +1,20 @@
+hash: af4069b0af39120783c08cb4cc0a8dacbe60e3b77d58ce5df31fe7d36fcb82f1
+updated: 2016-03-18T10:25:10.560695235+01:00
+imports:
+- name: github.com/aws/aws-sdk-go
+  version: 4da0bec8953a0a540f391930a946917b12a95671
+  subpackages:
+  - aws/session
+- name: github.com/go-errors/errors
+  version: a41850380601eeb43f4350f7d17c6bbd8944aaf8
+- name: github.com/inconshreveable/mousetrap
+  version: 76626ae9c91c4f2a10f34cad8ce83ea42c93bb75
+- name: github.com/spf13/cobra
+  version: 1bacefc9a216c93293e670067bd159a64b4d72c3
+- name: github.com/spf13/pflag
+  version: 7f60f83a2c81bc3c3c0d5297f61ddfa68da9d3b7
+- name: github.com/stretchr/testify
+  version: 6fe211e493929a8aac0469b93f28b1d0688a9a3a
+  subpackages:
+  - assert
+devImports: []

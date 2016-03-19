@@ -26,10 +26,7 @@ Flags:
 See the [releases page](https://github.com/meltwater/awsu/releases) for version numbers
 
 ```
-SECRETARY_VERSION=x.y.z
-
-sudo curl -fsSLo /usr/bin/awsu "https://github.com/meltwater/awsu/releases/download/${SECRETARY_VERSION}/awsu-`uname -s`-`uname -m`" && \
-     chmod +x /usr/bin/awsu
+sudo sh -c 'curl -fsSLo /usr/bin/awsu "https://github.com/meltwater/awsu/releases/download/AWSU_VERSION/awsu-`uname -s`-`uname -m`" && chmod +x /usr/bin/awsu'
 ```
 
 If you have Golang installed you could also install from source like

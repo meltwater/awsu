@@ -73,6 +73,7 @@ $ onstaging
 
 Inspired by
 
+* https://github.com/paperg/awsudo
 * https://github.com/mlrobinson/aws-profile
 * https://github.com/jbuck/assume-aws-role
 * http://blog.sinica.me/aws_multi_account_with_terraform.html

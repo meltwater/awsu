@@ -17,14 +17,15 @@ func main() {
 
 	rootCmd := &cobra.Command{
 		Use:   "awsu IAMRoleARN [command] [args]...",
-		Short: "Assume a AWS IAM role and execute a command or shell",
+		Short: "Assume a AWS IAM role and execute a command or shell.",
+		Long:  "Assume a AWS IAM role and execute a command or shell.\n\nIf no command is given an interactive shell will be started with the credentials supplied as environment variables.",
 		Run: func(cmd *cobra.Command, args []string) {
 			assertThat(len(args) >= 1, "Expected an IAM role")
-			executeCommand(durationSeconds, args[0], args[1:])
+			executeCommand(args[0], durationSeconds, args[1:])
 		},
 	}
 
-	rootCmd.Flags().Int64VarP(&durationSeconds, "duration", "", int64(900), "Expiration time in seconds for the temporary credentials")
+	rootCmd.Flags().Int64VarP(&durationSeconds, "duration", "", int64(900), "Session expiration time in seconds")
 
 	// Handle checked errors nicely
 	defer func() {

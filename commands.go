@@ -16,7 +16,8 @@ func filterExistingCredentials(list []string) []string {
 	for _, item := range list {
 		if !strings.HasPrefix(item, "AWS_ACCESS_KEY_ID=") &&
 			!strings.HasPrefix(item, "AWS_SECRET_ACCESS_KEY=") &&
-			!strings.HasPrefix(item, "AWS_SESSION_TOKEN=") {
+			!strings.HasPrefix(item, "AWS_SESSION_TOKEN=") &&
+			!strings.HasPrefix(item, "AWS_DEFAULT_REGION=") {
 			result = append(result, item)
 		}
 	}
@@ -25,27 +26,57 @@ func filterExistingCredentials(list []string) []string {
 }
 
 // Encrypts data from stdin and writes to stdout
-func executeCommand(durationSeconds int64, iamRole string, args []string) {
+func executeCommand(iamProfile string, durationSeconds int64, args []string) {
+	// Human readable name of this session shown in AWS logs, for debugging purposes
 	hostname, err := os.Hostname()
 	sessionName := fmt.Sprintf("%s-%s-%s",
 		defaults(os.Getenv("USER"), "unknown"),
 		defaults(hostname, os.Getenv("HOST"), os.Getenv("HOSTNAME"), "unknown"),
 		randSeq(8))
 
-	svc := sts.New(session.New())
+	// Initialize the session
+	var accessKeyId, secretAccessKey, sessionToken, region string
 
-	params := &sts.AssumeRoleInput{
-		RoleArn:         aws.String(iamRole),     // Required
-		RoleSessionName: aws.String(sessionName), // Required
-		DurationSeconds: aws.Int64(durationSeconds),
-		//		ExternalId:      aws.String("externalIdType"),
-		//		Policy:          aws.String("sessionPolicyDocumentType"),
-		//		SerialNumber:    aws.String("serialNumberType"),
-		//		TokenCode:       aws.String("tokenCodeType"),
+	if iamProfile != "" {
+		// Resolve ARN and AWS_DEFAULT_REGION through source_profile in ~/.aws/config
+		if !strings.HasPrefix(iamProfile, "arn:aws:iam:") {
+			// https://github.com/Bowbaq/profilecreds
+			// https://github.com/aws/aws-sdk-go/issues/384
+			// https://github.com/paperg/awsudo/blob/master/awsudo/config.py
+		}
+
+		sess := session.New()
+		svc := sts.New(sess)
+
+		// Assume role given by ARN
+		params := &sts.AssumeRoleInput{
+			RoleArn:         aws.String(iamProfile),  // Required
+			RoleSessionName: aws.String(sessionName), // Required
+			DurationSeconds: aws.Int64(durationSeconds),
+			//		ExternalId:      aws.String("externalIdType"),
+			//		Policy:          aws.String("sessionPolicyDocumentType"),
+			//		SerialNumber:    aws.String("serialNumberType"),
+			//		TokenCode:       aws.String("tokenCodeType"),
+		}
+
+		resp, err := svc.AssumeRole(params)
+		check(err, "Failed to assume role")
+
+		accessKeyId = *resp.Credentials.AccessKeyId
+		secretAccessKey = *resp.Credentials.SecretAccessKey
+		sessionToken = *resp.Credentials.SessionToken
+		region = *sess.Config.Region
+	} else {
+		// Output the session credentials
+		sess := session.New()
+		creds, err := sess.Config.Credentials.Get()
+		check(err, "Failed to retrive credentials from session")
+
+		accessKeyId = creds.AccessKeyID
+		secretAccessKey = creds.SecretAccessKey
+		sessionToken = creds.SessionToken
+		region = *sess.Config.Region
 	}
-
-	resp, err := svc.AssumeRole(params)
-	check(err)
 
 	// Default to launch a subshell
 	binary := defaults(os.Getenv("SHELL"), "/bin/sh")
@@ -58,9 +89,16 @@ func executeCommand(durationSeconds int64, iamRole string, args []string) {
 
 	// Inject the temporary credentials
 	env := append(filterExistingCredentials(os.Environ()),
-		fmt.Sprintf("AWS_ACCESS_KEY_ID=%s", *resp.Credentials.AccessKeyId),
-		fmt.Sprintf("AWS_SECRET_ACCESS_KEY=%s", *resp.Credentials.SecretAccessKey),
-		fmt.Sprintf("AWS_SESSION_TOKEN=%s", *resp.Credentials.SessionToken))
+		fmt.Sprintf("AWS_ACCESS_KEY_ID=%s", accessKeyId),
+		fmt.Sprintf("AWS_SECRET_ACCESS_KEY=%s", secretAccessKey))
+
+	if sessionToken != "" {
+		env = append(env, fmt.Sprintf("AWS_SESSION_TOKEN=%s", sessionToken))
+	}
+
+	if region != "" {
+		env = append(env, fmt.Sprintf("AWS_DEFAULT_REGION=%s", region))
+	}
 
 	// Execute subcommand
 	err = syscall.Exec(binary, args, env)

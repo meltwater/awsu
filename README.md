@@ -1,5 +1,5 @@
 # Assume AWS IAM role
-[![Travis CI](https://img.shields.io/travis/meltwater/awsu/master.svg)](https://travis-ci.org/meltwater/awsu)
+[![Travis CI](https://img.shields.io/travis/mikljohansson/awsu/master.svg)](https://travis-ci.org/mikljohansson/awsu)
 
 Assumes an IAM role and passes the temporary credentials to another command or shell.
 
@@ -23,16 +23,16 @@ Flags:
 ```
 
 ## Installation
-See the [releases page](https://github.com/meltwater/awsu/releases) for version numbers
+See the [releases page](https://github.com/mikljohansson/awsu/releases) for version numbers
 
 ```
-sudo sh -c 'curl -fsSLo /usr/bin/awsu "https://github.com/meltwater/awsu/releases/download/AWSU_VERSION/awsu-`uname -s`-`uname -m`" && chmod +x /usr/bin/awsu'
+sudo sh -c 'curl -fsSLo /usr/bin/awsu "https://github.com/mikljohansson/awsu/releases/download/AWSU_VERSION/awsu-`uname -s`-`uname -m`" && chmod +x /usr/bin/awsu'
 ```
 
 If you have Golang installed you could also install from source like
 
 ```
-go get github.com/meltwater/awsu
+go get github.com/mikljohansson/awsu
 ```
 
 ### Quick Access

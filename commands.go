@@ -35,17 +35,15 @@ func executeCommand(iamProfile string, durationSeconds int64, args []string) {
 		randSeq(8))
 
 	// Initialize the session
-	var accessKeyId, secretAccessKey, sessionToken, region string
+	var accessKeyID, secretAccessKey, sessionToken, region string
+
+	// Force enable Shared Config to support $AWS_DEFAULT_REGION and ~/.aws/config profiles
+	sess, err := session.NewSessionWithOptions(session.Options{
+		SharedConfigState: session.SharedConfigEnable,
+	})
+	check(err, "Failed to initialize the AWS session")
 
 	if iamProfile != "" {
-		// Resolve ARN and AWS_DEFAULT_REGION through source_profile in ~/.aws/config
-		if !strings.HasPrefix(iamProfile, "arn:aws:iam:") {
-			// https://github.com/Bowbaq/profilecreds
-			// https://github.com/aws/aws-sdk-go/issues/384
-			// https://github.com/paperg/awsudo/blob/master/awsudo/config.py
-		}
-
-		sess := session.New()
 		svc := sts.New(sess)
 
 		// Assume role given by ARN
@@ -62,17 +60,16 @@ func executeCommand(iamProfile string, durationSeconds int64, args []string) {
 		resp, err := svc.AssumeRole(params)
 		check(err, "Failed to assume role")
 
-		accessKeyId = *resp.Credentials.AccessKeyId
+		accessKeyID = *resp.Credentials.AccessKeyId
 		secretAccessKey = *resp.Credentials.SecretAccessKey
 		sessionToken = *resp.Credentials.SessionToken
 		region = *sess.Config.Region
 	} else {
 		// Output the session credentials
-		sess := session.New()
 		creds, err := sess.Config.Credentials.Get()
 		check(err, "Failed to retrive credentials from session")
 
-		accessKeyId = creds.AccessKeyID
+		accessKeyID = creds.AccessKeyID
 		secretAccessKey = creds.SecretAccessKey
 		sessionToken = creds.SessionToken
 		region = *sess.Config.Region
@@ -89,7 +86,7 @@ func executeCommand(iamProfile string, durationSeconds int64, args []string) {
 
 	// Inject the temporary credentials
 	env := append(filterExistingCredentials(os.Environ()),
-		fmt.Sprintf("AWS_ACCESS_KEY_ID=%s", accessKeyId),
+		fmt.Sprintf("AWS_ACCESS_KEY_ID=%s", accessKeyID),
 		fmt.Sprintf("AWS_SECRET_ACCESS_KEY=%s", secretAccessKey))
 
 	if sessionToken != "" {

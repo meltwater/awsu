@@ -1,4 +1,4 @@
-package: github.com/meltwater/awsu
+package: github.com/mikljohansson/awsu
 import:
 - package: github.com/go-errors/errors
 - package: github.com/spf13/cobra
@@ -6,5 +6,6 @@ import:
   subpackages:
   - assert
 - package: github.com/aws/aws-sdk-go
+  version: v1.4.20
   subpackages:
   - aws/session

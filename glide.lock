@@ -1,14 +1,39 @@
-hash: af4069b0af39120783c08cb4cc0a8dacbe60e3b77d58ce5df31fe7d36fcb82f1
-updated: 2016-03-18T10:25:10.560695235+01:00
+hash: 2e810354ccb77dc8fb1f7a53be78d58dd9e3628839eb1b8335ad5d27fe826b0c
+updated: 2016-10-22T21:35:56.343618176+02:00
 imports:
 - name: github.com/aws/aws-sdk-go
-  version: 4da0bec8953a0a540f391930a946917b12a95671
+  version: 32cdc88aa5cd2ba4afa049da884aaf9a3d103ef4
   subpackages:
+  - aws
+  - aws/awserr
+  - aws/awsutil
+  - aws/client
+  - aws/client/metadata
+  - aws/corehandlers
+  - aws/credentials
+  - aws/credentials/ec2rolecreds
+  - aws/credentials/endpointcreds
+  - aws/credentials/stscreds
+  - aws/defaults
+  - aws/ec2metadata
+  - aws/request
   - aws/session
+  - aws/signer/v4
+  - private/endpoints
+  - private/protocol
+  - private/protocol/query
+  - private/protocol/query/queryutil
+  - private/protocol/rest
+  - private/protocol/xml/xmlutil
+  - service/sts
 - name: github.com/go-errors/errors
   version: a41850380601eeb43f4350f7d17c6bbd8944aaf8
+- name: github.com/go-ini/ini
+  version: afbd495e5aaea13597b5e14fe514ddeaa4d76fc3
 - name: github.com/inconshreveable/mousetrap
   version: 76626ae9c91c4f2a10f34cad8ce83ea42c93bb75
+- name: github.com/jmespath/go-jmespath
+  version: fba8638ac545c50f9e6855ed106b62ba9f9f3aea
 - name: github.com/spf13/cobra
   version: 1bacefc9a216c93293e670067bd159a64b4d72c3
 - name: github.com/spf13/pflag
@@ -17,4 +42,12 @@ imports:
   version: 6fe211e493929a8aac0469b93f28b1d0688a9a3a
   subpackages:
   - assert
-devImports: []
+testImports:
+- name: github.com/davecgh/go-spew
+  version: 5215b55f46b2b919f50a1df0eaa5886afe4e3b3d
+  subpackages:
+  - spew
+- name: github.com/pmezard/go-difflib
+  version: d8ed2627bdf02c080bf22230dbb337003b7aba2d
+  subpackages:
+  - difflib
